@@ -48,7 +48,7 @@
    "provisioners":[
       {
          "type":"shell",
-         "execute_command":"echo 'packer'|{{.Vars}} sudo -S -E bash '{{.Path}}'",
+         "execute_command":"echo '{{ user `ssh_password` }}'|{{.Vars}} sudo -S -E bash '{{.Path}}'",
          "inline":[
             "yum -y install epel-release",
             "yum -y update",
