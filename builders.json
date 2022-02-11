@@ -1,4 +1,15 @@
 {
+	 "variables":{
+      "boot_wait":"5s",
+      "disk_size":"40960",
+      "iso_checksum":"07b94e6b1a0b0260b94c83d6bb76b26bf7a310dc78d7a9c7432809fb9bc6194a",
+      "iso_url":"http://download.nus.edu.sg/mirror/centos/7.9.2009/isos/x86_64/CentOS-7-x86_64-Minimal-2009.iso",
+      "memsize":"1024",
+      "numvcpus":"1",
+      "ssh_password":"packer",
+      "ssh_username":"packer",
+      "vm_name":"CentOS-7-x86_64-Template"
+    },
      "builders":[
       {
          "type":"virtualbox-iso",
