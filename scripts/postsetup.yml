@@ -1,0 +1,92 @@
+---
+- name: "postsetup.yml"
+  hosts: localhost
+  gather_facts: yes
+  become: yes
+  tasks:
+  - name: becoming VIM
+    lineinfile:
+      path: /root/.bashrc
+      line: "alias vi='vim'"
+      state: present
+
+  - name: VIMRC config file
+    file:
+      path: /root/.vimrc
+      state: touch
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: Configure vim
+    blockinfile:
+      path: /root/.vimrc
+      block: |
+        set nocompatible
+        set number
+        set autoindent
+        syntax on
+        highlight Comment ctermfg=LightCyan
+      marker: ""
+      state: present
+  - name: Update CA bundle
+    get_url:
+      url: https://curl.haxx.se/ca/cacert.pem
+      dest: /etc/pki/tls/certs/ca-bundle.crt 
+      force: yes
+
+  - name: EPEL repo
+    yum:
+      name: "epel-release"
+      state: latest
+
+  - name: Upgrade to latest
+    yum:
+      name: "*"
+      state: latest
+
+  - name: Install remaining packages
+    yum:
+      name: "{{ packages }}"
+      state: latest
+    vars:
+      packages:
+      - bash-completion
+      - ccze
+      - git
+      - screen
+
+  - name: VirtualBox Guest dependencies
+    yum:
+      name: "{{ packages }}"
+      state: latest
+    vars:
+      packages:
+      - bzip2
+      - dkms
+      - kernel-devel
+      - kernel-headers
+      - gcc
+      - make
+      - perl
+
+  - name: Mount VBoxGuestAdditions.iso
+    mount:
+      path: /mnt
+      src: /home/packer/VBoxGuestAdditions.iso
+      fstype: iso9660
+      opts: ro,loop
+      state: mounted
+
+  - name: Install VBoxGuestAdditions.iso
+    command: sh /mnt/VBoxLinuxAdditions.run
+
+  - name: Umount VBoxGuestAdditions.iso
+    mount:
+      path: /mnt
+      state: absent
+
+  - name: Delete VBoxGuestAdditions.iso
+    file:
+      path: /home/packer/VBoxGuestAdditions.iso
+      state: absent
