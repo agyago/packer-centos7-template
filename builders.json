@@ -1,5 +1,5 @@
 {
-	 "variables":{
+     "variables":{
       "boot_wait":"5s",
       "disk_size":"40960",
       "iso_checksum":"07b94e6b1a0b0260b94c83d6bb76b26bf7a310dc78d7a9c7432809fb9bc6194a",
