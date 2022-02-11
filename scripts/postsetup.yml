@@ -55,7 +55,10 @@
       - ccze
       - git
       - screen
-
+  - name: check system-get default
+    command: systemctl get-default
+    register: output
+   
   - name: VirtualBox Guest dependencies
     yum:
       name: "{{ packages }}"
@@ -69,7 +72,8 @@
       - gcc
       - make
       - perl
-
+    when: output.stdout == "graphical.target"
+    
   - name: Mount VBoxGuestAdditions.iso
     mount:
       path: /mnt
@@ -77,16 +81,20 @@
       fstype: iso9660
       opts: ro,loop
       state: mounted
+    when: output.stdout == "graphical.target"
 
   - name: Install VBoxGuestAdditions.iso
     command: sh /mnt/VBoxLinuxAdditions.run
+    when: output.stdout == "graphical.target"
 
   - name: Umount VBoxGuestAdditions.iso
     mount:
       path: /mnt
       state: absent
+    when: output.stdout == "graphical.target"
 
   - name: Delete VBoxGuestAdditions.iso
     file:
       path: /home/packer/VBoxGuestAdditions.iso
       state: absent
+    when: output.stdout == "graphical.target"
